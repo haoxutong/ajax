@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+	<title>ajax示例</title>
+	<style type="text/css">
+     body,ul,li,a,img,h2{margin:0;padding:0;}
+     li{list-style: none;}
+     img{border:none;}
+     #ul1{
+     	width:1080px;
+     	margin:100px auto;
+     }
+     #ul1 li{width:247px;float:left;margin-right:10px;}
+     #ul1 li div{border:1px solid black;padding:10px;margin-bottom: 10px;}
+     #ul1 li div img{width:225px;display:block;}
+	</style>
+	<script src='ajax.js'></script>
+	<script type="text/javascript">
+	window.onload=function(){
+		var oUl=document.getElementById('ul1');
+		var aLis=oUl.getElementsByTagName('li');
+		var iPage=1;
+		var flag=true;
+		getList();
+		function  getList(){
+			ajax('get','getPics.php','cpage='+iPage,function(data){
+				var data=JSON.parse(data);
+				if(!data.length) return;
+				for(var i=0;i<data.length;i++){
+					var _index=getShort();
+					var oDiv=document.createElement('div');
+					var oImg=document.createElement('img');
+					oImg.style.width='225px';
+					oImg.style.height=data[i].height*(225/data[i].width)+'px';
+					oImg.src=data[i].preview;
+					var oP=document.createElement('p');
+					oP.innerHTML=data[i].title;
+					oDiv.appendChild(oImg);
+					oDiv.appendChild(oP);
+					aLis[_index].appendChild(oDiv);
+				}
+				flag=true;
+				
+				
+			});
+			
+		}
+		window.onscroll=function(){
+			var _index=getShort();
+			var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;
+			if(aLis[_index].offsetHeight+getTop(aLis[_index])<document.documentElement.clientHeight+scrollTop){
+				if(flag){
+					flag=false;
+					iPage++
+					getList();
+					
+				}
+				
+			}
+		}
+		function getShort(){
+			var index=0
+			for(var i=1;i<aLis.length;i++){
+				if(aLis[i].offsetHeight<aLis[index].offsetHeight){
+					index=i;
+				}
+			}
+			return index;;
+		}
+		function getTop(obj){
+			var offsetTop=0
+			while(obj){
+				 offsetTop+=obj.offsetTop;
+				obj=obj.offsetParent;
+			}
+			return offsetTop;
+		}
+	}
+	</script>
+</head>
+<body>
+<ul id='ul1'>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+</ul>
+</body>
+</html>
