@@ -1,0 +1,55 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+	<title>豆瓣jsonp示例</title>
+	<style type="text/css">
+#q{
+	width:300px;
+	height:30px;
+	padding:5px;
+	border:1px solid #f90;
+	font-size:14px;
+}
+dl{
+	border-bottom: 1px dotted #000;
+}
+dt{font-weight:bold;}
+	</style>
+	<script type="text/javascript">
+	function fn1(data){
+		var oList=document.getElementById('list');
+		var oP=document.getElementById('msg');
+		//console.log(data);
+		oP.innerHTML=data.title.$t+':'+data['opensearch:totalResults'].$t;
+		var aEntry=data.entry;
+		var html='';
+		for(var i=0;i<aEntry.length;i++){
+			html+='<dl><dt>'+aEntry[i].title.$t+'</dt><dd><img src="'+aEntry[i].link[2]['@href']+'"/></dd></dl>'
+		}
+		oList.innerHTML=html;
+
+	}
+	window.onload=function(){
+		var oQ=document.getElementById('q');
+		var oBtn=document.getElementById('btn1');
+		oBtn.onclick=function(){
+			if(oQ.value!=''){
+				var oScript=document.createElement('script');
+				oScript.src="http://api.douban.com/book/subjects?q="+oQ.value+"&alt=xd&callback=fn1";
+				document.body.appendChild(oScript);
+			}
+			
+		}
+	}
+	</script>
+</head>
+<body>
+<input id='q' type='text'>
+<input id='btn1' type='button' value='搜索'>
+<p id='msg'></p>
+<hr/>
+<div id='list'></div>
+	
+</div>
+</body>
+</html>
